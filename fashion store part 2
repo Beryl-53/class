@@ -1,0 +1,185 @@
+<?php
+$servername = "localhost";
+$username = "root";   // default user
+$password = "";       // default password (empty for XAMPP/WAMP)
+$dbname = "fashion_store";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+?>
+<?php include 'db_connect.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fashion Store</title>
+  <style>
+    body {font-family: Arial, sans-serif; margin: 0; background-color: #f9f9f9; color: #333;}
+    header {background: linear-gradient(90deg, #ff4d4d, #ff9966); color: white; text-align: center; padding: 20px;}
+    header h1 {margin: 0; font-size: 2.5rem; letter-spacing: 2px;}
+    nav {background: #222; padding: 10px; text-align: center;}
+    nav a {color: white; text-decoration: none; margin: 0 15px; font-weight: bold; transition: color 0.3s;}
+    nav a:hover {color: #ff9966;}
+    .container {width: 90%; margin: auto; padding: 30px 0;}
+    .products {display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;}
+    .product-card {background: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; padding: 15px; transition: transform 0.3s;}
+    .product-card:hover {transform: scale(1.05);}
+    .product-card img {width: 100%; border-radius: 10px;}
+    .product-card h3 {margin: 10px 0; font-size: 1.2rem; color: #ff4d4d;}
+    table {width: 100%; border-collapse: collapse; margin: 30px 0;}
+    table, th, td {border: 1px solid #ddd; text-align: center;}
+    th, td {padding: 12px;}
+    th {background: #ff9966; color: white;}
+    .benefits {background: #fff0e6; padding: 20px; border-radius: 10px; margin: 30px 0;}
+    .benefits h2 {color: #ff4d4d; margin-bottom: 15px;}
+    footer {background: #222; color: white; text-align: center; padding: 15px; margin-top: 20px;}
+    button {background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;}
+    button:hover {background: #ff9966;}
+    input[type=number] {width: 50px; text-align: center;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Fashion Store</h1>
+    <p>Trendy Styles, Affordable Prices</p>
+  </header>
+
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Shop</a>
+    <a href="#">Sales</a>
+    <a href="#">Contact</a>
+  </nav>
+
+  <div class="container">
+    <h2>Our Fashion Collection</h2>
+    <div class="products">
+      <div class="product-card">
+        <img src="https://via.placeholder.com/200x250.png?text=Casual+Wear" alt="Casual Wear">
+        <h3>Casual Wear</h3>
+        <p>Comfortable everyday outfits.</p>
+        <form method="POST" action="buy.php">
+          <input type="hidden" name="item_id" value="1">
+          <input type="number" name="quantity" min="1" value="1">
+          <button type="submit" name="buy">Buy Now</button>
+        </form>
+      </div>
+      <div class="product-card">
+        <img src="https://via.placeholder.com/200x250.png?text=Formal+Attire" alt="Formal Attire">
+        <h3>Formal Attire</h3>
+        <p>Perfect for office & events.</p>
+        <form method="POST" action="buy.php">
+          <input type="hidden" name="item_id" value="2">
+          <input type="number" name="quantity" min="1" value="1">
+          <button type="submit" name="buy">Buy Now</button>
+        </form>
+      </div>
+      <div class="product-card">
+        <img src="https://via.placeholder.com/200x250.png?text=Footwear" alt="Footwear">
+        <h3>Footwear</h3>
+        <p>Trendy shoes & sneakers.</p>
+        <form method="POST" action="buy.php">
+          <input type="hidden" name="item_id" value="3">
+          <input type="number" name="quantity" min="1" value="1">
+          <button type="submit" name="buy">Buy Now</button>
+        </form>
+      </div>
+      <div class="product-card">
+        <img src="https://via.placeholder.com/200x250.png?text=Accessories" alt="Accessories">
+        <h3>Accessories</h3>
+        <p>Stylish bags & jewelry.</p>
+        <form method="POST" action="buy.php">
+          <input type="hidden" name="item_id" value="4">
+          <input type="number" name="quantity" min="1" value="1">
+          <button type="submit" name="buy">Buy Now</button>
+        </form>
+      </div>
+    </div>
+
+    <h2>Upcoming Sale Offers</h2>
+    <table>
+      <tr>
+        <th>Offer</th>
+        <th>Discount</th>
+        <th>Date</th>
+      </tr>
+      <tr><td>End of Season Sale</td><td>Up to 50% Off</td><td>October 10 - October 20</td></tr>
+      <tr><td>Black Friday Deals</td><td>Flat 60% Off</td><td>November 25</td></tr>
+      <tr><td>Christmas Special</td><td>Buy 1 Get 1 Free</td><td>December 20 - December 26</td></tr>
+    </table>
+
+    <div class="benefits">
+      <h2>Why Shop With Us?</h2>
+      <ul>
+        <li>Latest fashion trends at affordable prices.</li>
+        <li>High-quality products with fast delivery.</li>
+        <li>Exclusive discounts for loyal customers.</li>
+        <li>Secure online shopping experience.</li>
+      </ul>
+    </div>
+
+    <!-- Inventory & Sales Report -->
+    <?php
+      $sql = "SELECT * FROM inventory";
+      $result = $conn->query($sql);
+
+      if ($result->num_rows > 0) {
+          echo "<h2>Inventory & Sales Report</h2>";
+          echo "<table>
+                  <tr>
+                      <th>Item</th>
+                      <th>Price</th>
+                      <th>Quantity Bought</th>
+                      <th>Quantity Sold</th>
+                      <th>In Stock</th>
+                      <th>Total Revenue</th>
+                  </tr>";
+          while($row = $result->fetch_assoc()) {
+              echo "<tr>
+                      <td>".$row["item_name"]."</td>
+                      <td>".$row["price"]."</td>
+                      <td>".$row["quantity_bought"]."</td>
+                      <td>".$row["quantity_sold"]."</td>
+                      <td>".$row["quantity_remaining"]."</td>
+                      <td>".$row["total_revenue"]."</td>
+                    </tr>";
+          }
+          echo "</table>";
+      } else {
+          echo "No items found.";
+      }
+      $conn->close();
+    ?>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Fashion Store. All rights reserved.</p>
+  </footer>
+</body>
+</html>
+<?php
+include 'db_connect.php';
+
+if(isset($_POST['buy'])){
+    $item_id = $_POST['item_id'];
+    $quantity = $_POST['quantity'];
+
+    $sql = "UPDATE inventory 
+            SET quantity_sold = quantity_sold + $quantity
+            WHERE id = $item_id AND quantity_remaining >= $quantity";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "<p>Purchase successful! <a href='index.php'>Go back</a></p>";
+    } else {
+        echo "Error: " . $conn->error;
+    }
+}
+$conn->close();
+?>
+
